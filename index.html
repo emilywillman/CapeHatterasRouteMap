@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset=utf-8 />
+	<title>Cape Hatteras National Seashore</title>
+	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
+
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			background: "whitesmoke";
+			font-family: "Noto Sans", sans-serif;
+			color: #3d3d3d;
+		}
+
+		h1 {
+			position: absolute;
+			margin-top: 0;
+			top: 10px;
+			left: 45px;
+			font-size: 2em;
+			font-family: "Lora", serif;
+			letter-spacing: .04em;
+			padding: 10px 15px;
+			background: rgba(256, 256, 256);
+			border: 1px solid grey;
+			border-radius: 3px;
+			z-index: 800;
+		}
+
+		h2 {
+			font-family: "Lora", serif;
+			letter-spacing: .04em;
+		}
+
+		#map {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+		}
+
+		section {
+			position: absolute;
+			bottom: 0;
+			left: 10px;
+			width: 280px;
+			margin: 20px auto;
+			padding: 0 15px;
+			background: rgba(256, 256, 256);
+			border: 1px solid grey;
+			border-radius: 3px;
+			z-index: 800;
+		}
+
+		p {
+			font-size: .9em;
+			line-height: 1.5em;
+		}
+
+		a {
+			color: #005daa;
+			text-decoration: none;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+
+		.leaflet-tooltip img {
+			max-width: 400px;
+			max-height: 200px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<h1>Day Trip Through Cape Hatteras, NC</h1>
+
+	<div id='map'></div>
+
+	<section>
+		<h2>Avon to Hatteras: My Favorite Stops</h2>
+
+		<p>During my summers growing up I would spend a lot of my time on Hatteras Island. I've created a route of some of my favorite spots that make the perfect day trip!</p>
+
+		<p>My family has a beach house, Beach Dream, located in Avon. Just a few miles south on the Pamlico Sound is a popular day area and wind/kite surfing spot called <a href= https://www.outerbanks.com/canadian-hole.html>"Canadian Hole."</a> Often I'll come here to paddle board or kayack.
+		<p>Heading to the next town, Buxton, is where the <a href="https://www.nps.gov/caha/planyourvisit/chls.htm">Cape Hatteras Lighthouse</a> is located. The lighthouse is a tourist staple and has an interesting history. By this point I would be hungry and suggest stopping at Pop's. This little hole in the wall has great seafood and my favorite triggerfish sandwhich! Contuining south, you will eventually hit the Hatteras Ferry. The ferry can take you to Okracoke Island, a quaint beach village located about 13 miles south of Hatteras.<p>
+		<p>Map authored by Emily Willman.</p>
+
+	</section>
+
+	<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+
+	<script src="data/route.js"></script>
+
+	<script>
+
+//options to be used when creating the map
+		var options = {
+			center: [35.251438, -75.562917],
+			zoom: 14
+		};
+
+//creation of the Leaflet map
+		var map = L.map('map', options);
+
+//request to load basemap
+var Esri_WorldTopoMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
+}).addTo(map);
+
+//var CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+//	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+//	subdomains: 'abcd',
+//	maxZoom: 20
+//}).addTo(map);
+
+//string content to be inserted into a tooltip
+//		var message = 'Beacon Heights!';
+
+//create a Leaflet marker, centered on the map's center.
+//		L.marker(map.getCenter())
+//			.bindTooltip(message) //bind the tooltip and message to the marker
+//			.addTo(map) // add the marker to the map`
+//			.openTooltip(); // open the tooltip
+
+var myRoute = L.geoJson(data, {
+	filter : function(feature) {
+		if(feature.geometry.type =="LineString") {
+			return feature;
+		}
+		},
+		style : function(feature) {
+
+			return {
+				color: "#005DAA",
+				weight: 6,
+				opacity: 0.5,
+				dashArray: "7, 10"
+			}
+		}
+		}).addTo(map);
+
+		var myStops = L.geoJson(data, {
+			filter : function(feature) {
+				if(feature.geometry.type == "Point") {
+					return feature;
+				}
+			},
+			onEachFeature : function(feature, layer) {
+				layer.bindTooltip(
+					"<h3>" +
+						feature.properties.name + 
+						"</h3><p>" + 
+						"<img src=" +
+						feature.properties.Images +
+						">",
+					{
+						maxwidth: "auto",
+					}
+				);
+			},
+			}).addTo(map);
+
+map.fitBounds(myRoute.getBounds());
+	</script>
+
+</body>
+
+</html>
