@@ -1,1 +1,5 @@
-# CapeHatterasRouteMap
+# Day Trip Through Cape Hatteras, NC
+
+## A Route Map
+
+This is a Cape Hatteras route map leading from Avon, NC to Hatteras, NC with three highlighted stops along the way. The route line and point markers were created in google maps and turned into a gpx file using [Maps to GPX](https://mapstogpx.com/), an open source tool. Data was previewed, edited, and converted into a GeoJSON file using [geojson.io](https://geojson.io/#map=2/0/20). The GeoJSON file was then loaded as a variable in javascript and displayed using the [Leaflet](https://leafletjs.com/) Javascript library via two functions. The first function pulled the "LineString" geometry type and the second function pulled the "Point" geometry type from the GeoJSON. The route was then displayed on the map and refined using various styling options. Extra information on the [Canadian Hole](https://www.outerbanks.com/canadian-hole.html) and [Cape Hatteras Lighthouse](https://www.nps.gov/caha/planyourvisit/chls.htm) stops can be found at the attached links. 
